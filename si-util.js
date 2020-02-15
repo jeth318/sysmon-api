@@ -35,15 +35,8 @@ const statGroups = {
     netStats
 };
 
-console.log(4294967296 / 1024 / 1024);
-
 console.log(si);
 
-setInterval(function() {
-    si.networkStats().then(data => {
-        console.log(data);
-    })
-}, 1000) 
 
 const getStatsByGroup = async (key) => {
     let promises = statGroups[key].map(stat => stat());
@@ -82,14 +75,16 @@ const getMemData = async () => {
 
 const getNetData = async () => {
     const netStatsResponse = await getStatsByGroup('netStats');
-    console.log(netStatsResponse[0]);
+    console.log(netStatsResponse[0][0]);
     
     return {
         interface: netStatsResponse[0][0].iface,
         status: netStatsResponse[0][0].operstate,
         traffic: {
-            download: Math.round((netStatsResponse[0][0].rx_sec / 1024 / 1024) * 100) / 100,
-            upload: Math.round((netStatsResponse[0][0].tx_sec / 1024 / 1024) * 100) / 100
+            // download: (Math.round((netStatsResponse[0][0].rx_sec / 1024 / 1024) * 100) / 100).toFixed(1),
+            // upload: (Math.round((netStatsResponse[0][0].tx_sec / 1024 / 1024) * 100) / 100).toFixed(1)
+            download: (((netStatsResponse[0][0].rx_sec / 1024 / 1024) * 100) / 10).toFixed(1),
+            upload: (((netStatsResponse[0][0].tx_sec / 1024 / 1024) * 100) / 10).toFixed(1)
         }
     }
 }
