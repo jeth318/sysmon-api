@@ -46,11 +46,18 @@ const emitNetData = async () => {
     io.emit('soc_net_data', netDataResponse); // This will emit the event to all connected sockets
 };
 
+const emitProcessesData = async () => {
+    const processesDataResponse = await siUtil.getProcessesData();
+    console.log('mnetata:', processesDataResponse);
+    io.emit('soc_processes_data', processesDataResponse); // This will emit the event to all connected sockets
+};
+
 // 1 SEC
 setInterval(async () => {
     emitCpuData();
     emitMemData();
     emitNetData();
+    emitProcessesData();
 }, 1000)
 
 // 25 HOURS

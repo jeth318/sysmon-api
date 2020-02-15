@@ -10,6 +10,10 @@ const cpuStats = [
     // si.fullLoad
 ];
 
+const processesStats = [
+    si.processes
+];
+
 const memStats = [si.mem, si.memLayout];
 const sysStats = [
     si.system,
@@ -31,14 +35,12 @@ const statGroups = {
     cpuStats,
     memStats,
     sysStats,
+    processesStats,
     // powerStats,
     netStats
 };
 
-console.log(si);
-
-
-const getStatsByGroup = async (key) => {
+const getStatsByGroup = async (key) => {    
     let promises = statGroups[key].map(stat => stat());
     try {
         return await Promise.all(promises);
@@ -47,8 +49,31 @@ const getStatsByGroup = async (key) => {
     }
 };
 
+const getProcessesData = async () => {
+    
+    const processesStatsResponse = await getStatsByGroup('processesStats');
+    const topProcesses = processesStatsResponse[0].list
+        .slice(0, 5)
+        .map(process => ({
+            name: process.name,
+            load: process.pcpu.toFixed(0),
+            user: process.user,
+            pid: process.pid
+        }));
+            
+    return {
+        all: processesStatsResponse[0].all,
+        running: processesStatsResponse[0].running,
+        sleeping: processesStatsResponse[0].sleeping,
+        topProcesses
+    }    
+}
+
+getProcessesData();
+
 const getCpuData = async () => {
     const cpuStatsResponse = await getStatsByGroup('cpuStats');
+    
     return {
             cpus: cpuStatsResponse[3].cpus.map(cpu => ({ load: cpu.load })),
             temp: cpuStatsResponse[2].main
@@ -127,5 +152,6 @@ module.exports = {
     getSysData,
     getMemData,
     getStaticData,
-    getNetData
+    getNetData,
+    getProcessesData
 };
