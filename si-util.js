@@ -31,17 +31,25 @@ const netStats = [
     //si.wifiNetworks
 ];
 
+const servicesStats = [
+    si.services
+]
+
 const statGroups = {
     cpuStats,
     memStats,
     sysStats,
     processesStats,
     // powerStats,
-    netStats
+    netStats,
+    servicesStats
 };
 
-const getStatsByGroup = async (key) => {    
-    let promises = statGroups[key].map(stat => stat());
+const getStatsByGroup = async (key, args = []) => {
+    let promises = statGroups[key]
+        .map(stat => args.length
+            ? stat(args)
+            : stat());
     try {
         return await Promise.all(promises);
     } catch (error) {
@@ -49,8 +57,13 @@ const getStatsByGroup = async (key) => {
     }
 };
 
+const getServicesData = async () => {
+    const servicesToCheck = 'nginx,plexmediaserver,transmission-daemon';
+    const servicesStatsResponse = await getStatsByGroup('servicesStats', servicesToCheck);
+    return servicesStatsResponse[0];
+}
+
 const getProcessesData = async () => {
-    
     const processesStatsResponse = await getStatsByGroup('processesStats');
     const topProcesses = processesStatsResponse[0].list
         .slice(0, 5)
@@ -68,8 +81,6 @@ const getProcessesData = async () => {
         topProcesses
     }    
 }
-
-getProcessesData();
 
 const getCpuData = async () => {
     const cpuStatsResponse = await getStatsByGroup('cpuStats');
@@ -124,20 +135,14 @@ const getStaticData = async () => {
 
 const getStatsData = async () => {
     const cpuStatsResponse = await getStatsByGroup('cpuStats');
-   // const memStatsResponse = await getStatsByGroup('memStats');
-   // const powerStatsResponse = await getStatsByGroup('powerStats');
     const sysStatsResponse = await getStatsByGroup('sysStats');
-    // const netStatsResponse = await getStatsByGroup('netStats');
 
     return {
         cpu: {
             cpus: cpuStatsResponse[3].cpus,
             temp: cpuStatsResponse[2].main
         },
-        // mem: memStatsResponse,
-        // power: powerStatsResponse,
         sys: sysStatsResponse,
-        // net: netStatsResponse
     }
 }
 
@@ -153,5 +158,6 @@ module.exports = {
     getMemData,
     getStaticData,
     getNetData,
-    getProcessesData
+    getProcessesData,
+    getServicesData
 };

@@ -28,6 +28,13 @@ const emitStaticData = async () => {
 
 };
 
+const emitServicesData = async () => {
+    const servicesDataResponse = await siUtil.getServicesData();
+    console.log('servicesData:', servicesDataResponse);
+    io.emit('soc_services_data', servicesDataResponse); // This will emit the event to all connected sockets
+
+};
+
 const emitCpuData = async () => {
     const cpuDataResponse = await siUtil.getCpuData();
     console.log('cpuData:', cpuDataResponse);
@@ -59,6 +66,12 @@ setInterval(async () => {
     emitNetData();
     emitProcessesData();
 }, 1000)
+
+// 5 SEC
+setInterval(async () => {
+    emitServicesData();
+}, 5000)
+
 
 // 25 HOURS
 setInterval(async () => {
