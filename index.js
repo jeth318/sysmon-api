@@ -5,6 +5,7 @@ var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 
 app.get('/', function (req, res) {
+	console.log('Well hello there!');
     res.sendFile(__dirname + '/index.html');
 });
 
@@ -17,8 +18,8 @@ io.on('connection', function (socket) {
     });
 });
 
-http.listen(3000, function () {
-    console.log('listening on *:3000');
+http.listen(3120, function () {
+    console.log('listening on *:3120');
 });
 
 const emitStaticData = async () => {
@@ -49,27 +50,28 @@ const emitMemData = async () => {
 
 const emitNetData = async () => {
     const netDataResponse = await siUtil.getNetData();
-    console.log('mnetata:', netDataResponse);
+    console.log('netData:', netDataResponse);
     io.emit('soc_net_data', netDataResponse); // This will emit the event to all connected sockets
 };
 
 const emitProcessesData = async () => {
     const processesDataResponse = await siUtil.getProcessesData();
-    console.log('mnetata:', processesDataResponse);
+    console.log('procData:', processesDataResponse);
     io.emit('soc_processes_data', processesDataResponse); // This will emit the event to all connected sockets
 };
 
 // 1 SEC
 setInterval(async () => {
     emitCpuData();
-    emitMemData();
     emitNetData();
-    emitProcessesData();
+    emitServicesData();
+    
 }, 1000)
 
 // 5 SEC
 setInterval(async () => {
-    emitServicesData();
+    emitMemData();
+    emitProcessesData();
 }, 5000)
 
 

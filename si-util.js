@@ -2,12 +2,9 @@ const si = require('systeminformation');
 
 const cpuStats = [
     si.cpu,
-    //si.cpuFlags,
     si.cpuCache,
-    //si.cpuCurrentspeed,
     si.cpuTemperature,
     si.currentLoad,
-    // si.fullLoad
 ];
 
 const processesStats = [
@@ -18,17 +15,12 @@ const memStats = [si.mem, si.memLayout];
 const sysStats = [
     si.system,
     si.osInfo,
-    // si.bios,
-    // si.chassis
+    si.bios,
+    si.chassis
 ];
 const powerStats = [si.battery];
 const netStats = [
-    //si.networkInterfaceDefault,
-    //si.networkGatewayDefault,
-    //si.networkInterfaces,
-    si.networkStats,
-    //si.networkConnections,
-    //si.wifiNetworks
+    si.networkStats
 ];
 
 const servicesStats = [
@@ -40,7 +32,6 @@ const statGroups = {
     memStats,
     sysStats,
     processesStats,
-    // powerStats,
     netStats,
     servicesStats
 };
@@ -111,7 +102,7 @@ const getMemData = async () => {
 
 const getNetData = async () => {
     const netStatsResponse = await getStatsByGroup('netStats');
-    console.log(netStatsResponse[0][0]);
+    // console.log(netStatsResponse[0][0]);
     
     return {
         interface: netStatsResponse[0][0].iface,

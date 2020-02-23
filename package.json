@@ -12,9 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "osx-temperature-sensor": "^1.0.5",
     "set-interval-async": "^1.0.30",
     "socket.io": "^2.3.0",
-    "systeminformation": "^4.21.2"
+    "systeminformation": "^4.22.1"
   }
 }
